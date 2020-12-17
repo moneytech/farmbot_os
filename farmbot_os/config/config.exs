@@ -86,6 +86,17 @@ config :logger,
     [application: :rabbit_common]
   ]
 
+if rollbar_token = System.get_env("ROLLBAR_TOKEN") do
+  IO.puts("=== USING ROLLBAR TOKEN #{rollbar_token}")
+
+  config :rollbax,
+    access_token: rollbar_token,
+    environment: "production",
+    enable_crash_reports: true
+else
+  config :rollbax, enable_crash_reports: false
+end
+
 import_config("lagger.exs")
 
 if Mix.target() == :host do
