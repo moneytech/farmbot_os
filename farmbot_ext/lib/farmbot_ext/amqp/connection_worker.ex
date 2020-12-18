@@ -27,7 +27,13 @@ defmodule FarmbotExt.AMQP.ConnectionWorker do
   @doc "Get the current active connection"
   @callback connection(GenServer.server()) :: connection()
   def connection(connection_worker \\ __MODULE__) do
-    GenServer.call(connection_worker, :connection)
+    try do
+      GenServer.call(connection_worker, :connection)
+    catch
+      :exit, reason ->
+        FarmbotCore.Logger.error(2, "Connection timeout #{inspect(reason)}")
+        {:timeout_exit, reason}
+    end
   end
 
   def close(connection_worker \\ __MODULE__) do

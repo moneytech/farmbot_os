@@ -3,6 +3,7 @@
 # 12.3.2
 
  * Improved remote error reporting.
+ * Bug fix: better handling of AMQP timeouts.
 
 # 12.3.1
 
