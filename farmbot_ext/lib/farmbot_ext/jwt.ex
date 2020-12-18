@@ -8,8 +8,7 @@ defmodule FarmbotExt.JWT do
     :mqtt,
     :vhost,
     :os_update_server,
-    :beta_os_update_server,
-    :interim_email
+    :beta_os_update_server
   ]
 
   alias FarmbotExt.JWT
@@ -22,8 +21,7 @@ defmodule FarmbotExt.JWT do
           iss: binary,
           mqtt: binary,
           os_update_server: binary,
-          vhost: binary,
-          interim_email: binary
+          vhost: binary
         }
 
   @doc "Decode a token."

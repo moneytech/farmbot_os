@@ -87,12 +87,11 @@ config :logger,
   ]
 
 if rollbar_token = System.get_env("ROLLBAR_TOKEN") do
-  IO.puts("=== USING ROLLBAR TOKEN #{rollbar_token}")
-
   config :rollbax,
     access_token: rollbar_token,
     environment: "production",
-    enable_crash_reports: true
+    enable_crash_reports: true,
+    custom: %{fbos_version: Mix.Project.config()[:version]}
 else
   config :rollbax, enable_crash_reports: false
 end
