@@ -112,8 +112,8 @@ defmodule FarmbotExt.AMQP.ConnectionWorker do
   end
 
   @impl GenServer
-  def terminate(_reason, %{conn: conn}) do
-    close_connection(conn)
+  def terminate(reason, %{conn: conn}) do
+    close_connection(conn, "Connection terminated: #{inspect(reason)}")
   end
 
   @impl GenServer
@@ -136,10 +136,13 @@ defmodule FarmbotExt.AMQP.ConnectionWorker do
     end
   end
 
+  def handle_info({:DOWN, _ref, :process, _pid, :heartbeat_timeout}, state) do
+    _ = close_connection(state.conn, "Network disconnect (high latency)")
+    {:stop, :heartbeat_timeout, state}
+  end
+
   def handle_info({:DOWN, _ref, :process, _pid, reason}, state) do
-    FarmbotCore.Logger.error(2, "AMQP Connection exit")
-    _ = close_connection(state.conn)
-    FarmbotTelemetry.event(:amqp, :connection_close)
+    _ = close_connection(state.conn, "AMQP Connection exit")
     {:stop, reason, state}
   end
 
@@ -149,9 +152,7 @@ defmodule FarmbotExt.AMQP.ConnectionWorker do
   end
 
   def handle_call(:close, _from, %{conn: _conn} = state) do
-    FarmbotCore.Logger.error(2, "AMQP Connection closing")
-    reply = close_connection(state.conn)
-    FarmbotTelemetry.event(:amqp, :connection_close)
+    reply = close_connection(state.conn, "AMQP Connection closing")
     {:stop, :close, reply, %{state | conn: nil}}
   end
 
@@ -184,9 +185,12 @@ defmodule FarmbotExt.AMQP.ConnectionWorker do
     AMQP.Connection.open(opts)
   end
 
-  defp close_connection(nil), do: :ok
+  defp close_connection(nil, _reason), do: :ok
 
-  defp close_connection(%{pid: pid}) do
+  defp close_connection(%{pid: pid}, reason) do
+    FarmbotCore.Logger.error(2, reason)
+    FarmbotTelemetry.event(:amqp, :connection_close)
+
     if Process.alive?(pid) do
       try do
         Process.exit(pid, :close)

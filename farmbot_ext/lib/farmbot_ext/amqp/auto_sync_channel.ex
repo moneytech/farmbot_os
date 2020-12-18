@@ -8,13 +8,14 @@ defmodule FarmbotExt.AMQP.AutoSyncChannel do
   use GenServer
   use AMQP
 
-  require FarmbotCore.Logger
-  require FarmbotTelemetry
-
   alias FarmbotCore.{BotState, JSON, Leds}
   alias FarmbotExt.AMQP.{ConnectionWorker, AutoSyncAssetHandler}
   alias FarmbotExt.API.{EagerLoader, Preloader}
   alias FarmbotExt.AMQP.Support
+
+  require FarmbotCore.Logger
+  require FarmbotTelemetry
+  require Support
 
   # The API dispatches messages for other resources, but these
   # are the only ones that Farmbot needs to sync.
@@ -137,6 +138,8 @@ defmodule FarmbotExt.AMQP.AutoSyncChannel do
     send(self(), :preload)
     {:noreply, state}
   end
+
+  Support.catch_unhandled_messages()
 
   def handle_call(:network_status, _, state) do
     reply = %{conn: state.conn, chan: state.chan, preloaded: state.preloaded}

@@ -5,11 +5,12 @@ defmodule FarmbotExt.AMQP.BotStateChannel do
 
   use GenServer
 
-  require FarmbotCore.Logger
-  require FarmbotTelemetry
   alias FarmbotCore.BotState
   alias FarmbotExt.AMQP.Support
   alias FarmbotExt.AMQP.BotStateChannelSupport
+  require FarmbotCore.Logger
+  require FarmbotTelemetry
+  require Support
 
   defstruct [:conn, :chan, :jwt, :cache]
   alias __MODULE__, as: State
@@ -45,6 +46,8 @@ defmodule FarmbotExt.AMQP.BotStateChannel do
     cache = Ecto.Changeset.apply_changes(change)
     {:noreply, %{state | cache: cache}, {:continue, :dispatch}}
   end
+
+  Support.catch_unhandled_messages()
 
   @impl GenServer
   def handle_cast(:force, state) do

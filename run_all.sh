@@ -14,7 +14,7 @@ mix format
 # rm -rf deps; rm -rf _build/
 mix coveralls.html
 # rm -f *.coverdata
-MIX_ENV=test mix compile
+mix compile
 
 echo "######### farmbot_celery_script"
 cd ../farmbot_celery_script
@@ -23,7 +23,7 @@ mix format
 # rm -rf deps; rm -rf _build/
 mix coveralls.html
 # rm -f *.coverdata
-MIX_ENV=test mix compile
+mix compile
 
 echo "######### farmbot_firmware"
 cd ../farmbot_firmware
@@ -32,7 +32,7 @@ mix format
 # rm -rf deps; rm -rf _build/
 mix coveralls.html
 # rm -f *.coverdata
-MIX_ENV=test mix compile
+mix compile
 
 echo "######### farmbot_core"
 cd ../farmbot_core
@@ -41,7 +41,7 @@ mix deps.get --all
 mix format
 mix coveralls.html
 # rm -f *.coverdata
-MIX_ENV=test mix compile
+mix compile
 
 echo "######### farmbot_ext"
 cd ../farmbot_ext
@@ -50,7 +50,7 @@ mix format
 # rm -rf deps; rm -rf _build/
 mix coveralls.html
 # rm -f *.coverdata
-MIX_ENV=test mix compile
+mix compile
 
 echo "######### farmbot_os"
 cd ../farmbot_os
@@ -59,7 +59,7 @@ mix format
 # rm -rf deps; rm -rf _build/
 mix coveralls.html
 # rm -f *.coverdata
-MIX_ENV=test mix compile
+mix compile
 
 cd ..
 cd farmbot_os

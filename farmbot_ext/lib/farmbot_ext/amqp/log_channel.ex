@@ -12,6 +12,7 @@ defmodule FarmbotExt.AMQP.LogChannel do
 
   alias FarmbotCore.{BotState, JSON}
   alias FarmbotExt.AMQP.Support
+  require Support
 
   @checkup_ms 50
   @exchange "amq.topic"
@@ -57,6 +58,8 @@ defmodule FarmbotExt.AMQP.LogChannel do
     new_state_cache = Ecto.Changeset.apply_changes(change)
     {:noreply, %{state | state_cache: new_state_cache}, @checkup_ms}
   end
+
+  Support.catch_unhandled_messages()
 
   def handle_continue([log | rest], state) do
     case do_handle_log(log, state) do

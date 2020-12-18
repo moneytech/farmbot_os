@@ -6,14 +6,14 @@ defmodule FarmbotExt.AMQP.CeleryScriptChannel do
   use GenServer
   use AMQP
 
+  alias FarmbotCeleryScript.{AST, StepRunner}
   alias FarmbotCore.JSON
+  alias FarmbotExt.AMQP.Support
+
   require FarmbotCore.Logger
   require FarmbotTelemetry
   require Logger
-
-  alias FarmbotCeleryScript.{AST, StepRunner}
-
-  alias FarmbotExt.AMQP.Support
+  require Support
 
   @exchange "amq.topic"
 
@@ -143,4 +143,6 @@ defmodule FarmbotExt.AMQP.CeleryScriptChannel do
         {:noreply, state}
     end
   end
+
+  Support.catch_unhandled_messages()
 end

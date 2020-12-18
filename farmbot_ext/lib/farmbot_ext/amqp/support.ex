@@ -60,4 +60,17 @@ defmodule FarmbotExt.AMQP.Support do
     FarmbotCore.Logger.error(1, "Failed to connect to #{chan_name} channel: #{inspect(err)}")
     FarmbotTelemetry.event(:amqp, :channel_open_error, nil, error: inspect(err))
   end
+
+  # AMQP restarts are expensive and lead to all kinds of
+  # problems / customer frustration. We don't want the GenServer
+  # to crash on unknown messages.
+  defmacro catch_unhandled_messages() do
+    quote do
+      def handle_info(other, state) do
+        m = "=== #{__MODULE__} Unhandled message: #{inspect(other)}"
+        FarmbotCore.Logger.debug(3, m)
+        {:noreply, state}
+      end
+    end
+  end
 end

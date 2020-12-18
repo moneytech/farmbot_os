@@ -11,6 +11,7 @@ defmodule FarmbotExt.AMQP.TelemetryChannel do
   alias FarmbotExt.AMQP.Support
   require FarmbotCore.Logger
   require FarmbotTelemetry
+  require Support
 
   @exchange "amq.topic"
   @dispatch_metrics_timeout 300_000
@@ -108,4 +109,6 @@ defmodule FarmbotExt.AMQP.TelemetryChannel do
     _ = FarmbotExt.Time.send_after(self(), :consume_telemetry, @consume_telemetry_timeout)
     {:noreply, state}
   end
+
+  Support.catch_unhandled_messages()
 end
